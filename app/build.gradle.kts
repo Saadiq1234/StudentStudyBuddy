@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
 
 
+
 }
 
 
@@ -90,10 +91,10 @@ dependencies {
     // Firebase (BOM for version management)
 
     implementation (platform("com.google.firebase:firebase-bom:34.3.0")) // Or a newer version
-    implementation ("com.google.firebase:firebase-auth:23.2.1")
-    implementation ("com.google.firebase:firebase-firestore")
-    implementation ("com.google.firebase:firebase-messaging")
-    implementation ("com.google.firebase:firebase-storage") // Added for file storage
+    implementation ("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-messaging-ktx")
+    implementation ("com.google.firebase:firebase-storage-ktx") // Added for file storage
     implementation("com.google.firebase:firebase-analytics")
     // Hilt (Dependency Injection)
     implementation ("com.google.dagger:hilt-android:2.51")
@@ -115,17 +116,11 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.3")
 
-// Import the Firebase BoM.
-    // This will automatically manage the versions of all Firebase libraries.
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.androidx.core.ktx)
-    // Add the dependencies for the Firebase products you want to use.
-    // When using the BoM, you don't specify versions in the individual Firebase library dependencies.
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.messaging)
-    implementation(libs.firebase.storage)
+
 }
+
+
+
 
 
 
