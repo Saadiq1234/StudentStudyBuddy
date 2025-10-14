@@ -52,7 +52,7 @@ Installation
 
 Clone the repository:
 
-git clone https://github.com/yourusername/student-study-buddy.git
+https://github.com/Saadiq1234/StudentStudyBuddy.git
 
 
 Open the project in Android Studio.
