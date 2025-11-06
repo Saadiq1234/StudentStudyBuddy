@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.studybuddy.app.data.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
 
 class NotesViewModel(private val context: Context) : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
@@ -28,18 +30,31 @@ class NotesViewModel(private val context: Context) : ViewModel() {
 
     fun createNote(title: String, content: String) {
         val uid = auth.currentUser?.uid ?: "anon"
-        val note = NoteEntity(userId = uid, title = title, content = content)
+        val note = NoteEntity(
+            id = UUID.randomUUID().toString(),
+            userId = uid,
+            title = title,
+            content = content,
+            timestamp = System.currentTimeMillis(),
+            synced = false
+        )
         viewModelScope.launch {
             repository.insertLocal(note)
         }
     }
 
     fun updateNote(note: NoteEntity) {
-        viewModelScope.launch { repository.insertLocal(note) }
+        val updatedNote = note.copy(
+            timestamp = System.currentTimeMillis(),
+            synced = false
+        )
+        viewModelScope.launch { repository.insertLocal(updatedNote) }
     }
 
     fun deleteNote(note: NoteEntity) {
-        viewModelScope.launch { AppDatabase.getInstance(context).noteDao().delete(note) }
+        viewModelScope.launch {
+            AppDatabase.getInstance(context).noteDao().delete(note)
+        }
     }
 
     fun manualSync() {

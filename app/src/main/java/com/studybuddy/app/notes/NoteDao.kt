@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes WHERE userId = :userId ORDER BY timestamp DESC")
+
+    @Query("SELECT * FROM notes WHERE userId = :userId")
     fun getNotesForUser(userId: String): Flow<List<NoteEntity>>
 
     @Query("SELECT * FROM notes WHERE synced = 0")
@@ -19,5 +20,4 @@ interface NoteDao {
 
     @Delete
     suspend fun delete(note: NoteEntity)
-
 }

@@ -26,7 +26,13 @@ fun AppNavHost(
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController, authViewModel) }
         composable("register") { RegisterScreen(navController, authViewModel) }
-        composable("dashboard") { DashboardScreen(navController, notesViewModel, remindersViewModel) }
+        composable("dashboard") {
+            DashboardScreen(
+                navController = navController,
+                notesViewModel = notesViewModel,
+                remindersViewModel = remindersViewModel
+            )
+        }
         composable("notes") { NotesScreen(navController, notesViewModel) }
         composable("note/{noteId}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("noteId") ?: ""
