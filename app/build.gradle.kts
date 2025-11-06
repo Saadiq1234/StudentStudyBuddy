@@ -7,10 +7,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     alias(libs.plugins.compose.compiler)
 
-
-
 }
-
 
 
 android {
@@ -19,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.studybuddy.app" // Use '='
-        minSdk = 21                         // Use '='
+        minSdk = 23                         // Use '='
         targetSdk = 34                      // Use '='
         versionCode = 1                     // Use '='
         versionName = "1.0"                 // Use '='
@@ -52,8 +49,6 @@ android {
     }
 
 
-
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -61,7 +56,19 @@ android {
     }
 }
 
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Dependency for the Google services Gradle plugin
+        classpath ("com.google.gms:google-services:4.4.0")
+    }
+}
+
 dependencies {
+
     // Core & Compose
     implementation ("androidx.core:core-ktx:1.13.1")
     implementation ("androidx.activity:activity-compose:1.8.0")
@@ -89,13 +96,13 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // Firebase (BOM for version management)
-
     implementation (platform("com.google.firebase:firebase-bom:34.3.0")) // Or a newer version
-    implementation ("com.google.firebase:firebase-auth-ktx")
-    implementation ("com.google.firebase:firebase-firestore-ktx")
-    implementation ("com.google.firebase:firebase-messaging-ktx")
-    implementation ("com.google.firebase:firebase-storage-ktx") // Added for file storage
+    implementation ("com.google.firebase:firebase-auth")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation ("com.google.firebase:firebase-messaging")
+    implementation ("com.google.firebase:firebase-storage") // Added for file storage
     implementation("com.google.firebase:firebase-analytics")
+
     // Hilt (Dependency Injection)
     implementation ("com.google.dagger:hilt-android:2.51")
     kapt ("com.google.dagger:hilt-android-compiler:2.51")
@@ -108,14 +115,12 @@ dependencies {
     implementation ("androidx.work:work-runtime-ktx:2.8.1")
 
     // Testing
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
     debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.3")
-
 
 }
 

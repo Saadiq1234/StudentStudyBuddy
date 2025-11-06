@@ -9,7 +9,7 @@ class ReminderScheduler {
     companion object {
         fun scheduleReminder(context: Context, reminder: ReminderEntity) {
             val delay = reminder.timeEpoch - System.currentTimeMillis()
-            if (delay <= 0) return val data = Data.Builder()
+            if (delay <= 0) return; val data = Data.Builder()
                 .putString("title", reminder.title)
                 .build()
             val request = OneTimeWorkRequestBuilder<ReminderWorker>()
