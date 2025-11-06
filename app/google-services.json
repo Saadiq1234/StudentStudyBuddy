@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "14150033351",
-    "project_id": "student-study-4b7d8",
-    "storage_bucket": "student-study-4b7d8.firebasestorage.app"
+    "project_number": "455747964921",
+    "project_id": "studentstudybuddyapp-d1b50",
+    "storage_bucket": "studentstudybuddyapp-d1b50.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:14150033351:android:9fe9f8435a2eca94a443e2",
+        "mobilesdk_app_id": "1:455747964921:android:7fe2526a6552def0d27728",
         "android_client_info": {
           "package_name": "com.studybuddy.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "455747964921-4q1rmtifc3ji604japmp6av1qr1k9ehj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyAyhRpzHLIb_49xauSXf2vvlzcA1rW7gGQ"
+          "current_key": "AIzaSyCxR-ie9zK1swUIYpnU2LDSzO6x1P1RQCU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455747964921-4q1rmtifc3ji604japmp6av1qr1k9ehj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

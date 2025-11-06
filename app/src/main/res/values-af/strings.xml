@@ -1,0 +1,17 @@
+<resources>
+    <!-- Algemene -->
+    <string name="app_name">Study Buddy</string>
+    <string name="login_title">Welkom terug! Teken asseblief in</string>
+
+    <!-- Dashboard Skerm -->
+    <string name="dashboard_title">Beheerpaneel</string>
+    <string name="your_notes">Jou Notas</string>
+    <string name="no_notes">Geen notas beskikbaar nie.</string>
+    <string name="your_reminders">Jou Herinneringe</string>
+    <string name="no_reminders">Geen herinneringe beskikbaar nie.</string>
+    <string name="add_note">Voeg Nota By</string>
+    <string name="add_reminder">Voeg Herinnering By</string>
+
+    <!-- Teken Uit -->
+    <string name="login">Teken Uit</string>
+</resources>

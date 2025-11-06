@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">StudentStudyBuddy</string>
+    <!-- General -->
+    <string name="app_name">Study Buddy</string>
+    <string name="login_title">Welcome back! Please sign in</string>
+
+    <!-- Dashboard Screen -->
+
+    <string name="dashboard_title">Dashboard</string>
+    <string name="your_notes">Your Notes</string>
+    <string name="no_notes">No notes yet.</string>
+    <string name="your_reminders">Your Reminders</string>
+    <string name="no_reminders">No reminders yet.</string>
+    <string name="add_note">Add Note</string>
+    <string name="add_reminder">Add Reminder</string>
+
+    <!-- Auth -->
+    <string name="login">Sign Out</string>
 </resources>
