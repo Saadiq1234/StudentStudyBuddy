@@ -15,46 +15,31 @@ import com.studybuddy.app.settings.SettingsScreen
 import com.studybuddy.app.auth.AuthViewModel
 import com.studybuddy.app.notes.NotesViewModel
 import com.studybuddy.app.reminders.RemindersViewModel
-import com.studybuddy.app.util.LanguageViewModel
-import com.studybuddy.app.notes.AddNoteScreen   // ✅ make sure this import exists
 
 @Composable
 fun AppNavHost(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     notesViewModel: NotesViewModel,
-    remindersViewModel: RemindersViewModel,
-    languageViewModel: LanguageViewModel
+    remindersViewModel: RemindersViewModel
 ) {
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController, authViewModel) }
         composable("register") { RegisterScreen(navController, authViewModel) }
-
         composable("dashboard") {
             DashboardScreen(
                 navController = navController,
-                authViewModel = authViewModel,
                 notesViewModel = notesViewModel,
                 remindersViewModel = remindersViewModel
             )
         }
-
         composable("notes") { NotesScreen(navController, notesViewModel) }
-
         composable("note/{noteId}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("noteId") ?: ""
             NoteEditorScreen(navController, notesViewModel, id)
         }
-
-        composable("note/new") {    // ✅ moved OUTSIDE of settings composable
-            AddNoteScreen(navController, notesViewModel)
-        }
-
         composable("reminders") { RemindersScreen(navController, remindersViewModel) }
         composable("resources") { ResourcesScreen(navController, notesViewModel) }
-
-        composable("settings") {
-            SettingsScreen(navController, languageViewModel)
-        }
+        composable("settings") { SettingsScreen(navController) }
     }
 }
