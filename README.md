@@ -1,4 +1,6 @@
 🎓 Student Study Buddy
+
+
 Contributors to this application is Saadiq Jattiem ST10303758 and Hopewell Mhlaba ST10218234
 Student Study Buddy is a modern Android application designed to help students stay organized, focused, and productive throughout their study journey. With built-in tools for reminders, note-taking, and a clean dashboard overview, this app simplifies how students manage their academic responsibilities.
 
