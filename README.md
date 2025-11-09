@@ -7,6 +7,7 @@ The app is built with Jetpack Compose, follows MVVM architecture, and integrates
 🌐 Links
 
 🔗 GitHub Repository: Student Study Buddy
+https://github.com/Saadiq1234/StudentStudyBuddy/tree/master
 
 🎥 Demo Video: Watch on YouTube
 https://www.youtube.com/shorts/Eo96IgPdBYo
