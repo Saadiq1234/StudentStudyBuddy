@@ -1,85 +1,174 @@
-Student Study Buddy
+🎓 Student Study Buddy
 
-Student Study Buddy is an Android application designed to help students manage their study sessions, track reminders, take notes, and stay organized. The app leverages Jetpack Compose for UI, Firebase Authentication for user management, and Room Database for local storage of notes and reminders.
+Student Study Buddy is a modern Android application designed to help students stay organized, focused, and productive throughout their study journey. With built-in tools for reminders, note-taking, and a clean dashboard overview, this app simplifies how students manage their academic responsibilities.
 
-📱 Features
+The app is built with Jetpack Compose, follows MVVM architecture, and integrates Firebase Authentication for secure sign-in and Room Database for offline data storage.
 
-User Authentication
+🌐 Links
 
-Sign in and register using Firebase Authentication.
+🔗 GitHub Repository: Student Study Buddy
 
-Secure user-specific data storage.
+🎥 Demo Video: Watch on YouTube
+https://www.youtube.com/shorts/Eo96IgPdBYo
 
-Reminders
+🚀 Features
+🔐 User Authentication
 
-Schedule study reminders with notifications.
+Firebase Authentication (Email & Password)
 
-Supports recurring or one-time reminders.
+Secure login and registration flow
 
-Visual list of upcoming reminders.
+Automatically stores user sessions
 
-Notes
+Logout functionality with navigation back to login
 
-Create, edit, and delete personal notes.
+⏰ Reminders
 
-Rich text input support with title and content.
+Create one-time or recurring study reminders
 
-Organized storage in Room database.
+Notifications using Android Notification API
 
-Dashboard/Home Screen
+Easy-to-use scheduling interface
 
-Quick overview of upcoming reminders.
+Automatically displayed on the dashboard
 
-Access to recent notes.
+Local persistence using Room Database
 
-Material 3 UI
+📝 Notes
 
-Modern, responsive design using Jetpack Compose.
+Create, edit, and delete personal study notes
 
-Light/Dark theme support.
+Organized storage with title and content fields
 
-Technology Stack
+Auto-refresh and persistence using Room
 
-Language: Kotlin
+Designed for simplicity and efficiency
 
-UI: Jetpack Compose (Material 3)
+🏠 Dashboard / Home Screen
 
-Database: Room (local)
+Quick access to upcoming reminders
 
-Authentication: Firebase Authentication
+View recent notes at a glance
 
-Installation
+Centralized hub for managing your study life
 
-Clone the repository:
+🎨 Modern UI (Material 3)
 
-https://github.com/Saadiq1234/StudentStudyBuddy.git
+Built entirely with Jetpack Compose
+
+Dynamic, responsive, and clean design
+
+Light and dark theme support
+
+Adaptive layouts for different screen sizes
+
+🧠 Architecture
+
+The project follows the MVVM (Model-View-ViewModel) pattern for maintainable, scalable, and testable code.
+
+Model      →  Handles data logic and database entities
+ViewModel  →  Manages UI-related data using StateFlow
+View       →  Jetpack Compose UI screens observing ViewModel states
 
 
-Open the project in Android Studio.
+Core Components:
 
-Sync Gradle and ensure the required dependencies are installed.
+Room Database → Local data storage for Notes & Reminders
 
-Add Firebase configuration:
+Firebase Authentication → User login and registration
 
-Download google-services.json from your Firebase project.
+StateFlow → Reactive state management
 
-Place it in app/ directory.
+Jetpack Compose Navigation → Seamless navigation between screens
 
-Build and run the app on an Android device or emulator.
+🧰 Technology Stack
+Layer	Technology
+Language	Kotlin
+UI	Jetpack Compose (Material 3)
+Architecture	MVVM
+Local Database	Room
+Authentication	Firebase Authentication
+Notifications	Android Notification API
+State Management	StateFlow / LiveData
+Dependency Injection (optional)	Hilt (if implemented)
+🛠️ Installation Guide
 
-Usage
+Follow these steps to set up Student Study Buddy on your machine:
 
-Register or log in with your Firebase account.
+1️⃣ Clone the Repository
+git clone https://github.com/Saadiq1234/StudentStudyBuddy.git
+cd StudentStudyBuddy
 
-Navigate to Reminders to add a study reminder.
+2️⃣ Open in Android Studio
 
-Go to Notes to create or edit notes.
+Open the project folder in Android Studio.
 
-Notifications will appear at the scheduled time for your reminders.
+Let Gradle sync automatically or trigger manually via File → Sync Project with Gradle Files.
 
-Customize your study schedule to improve productivity.
+3️⃣ Configure Firebase
 
-Notifications: Android Notification API
+Go to your Firebase Console
+.
 
-Architecture: MVVM (ViewModel + StateFlow)
+Create a new Firebase project.
 
+Add an Android app with your package name.
+
+Download the google-services.json file.
+
+Place it inside the /app directory.
+
+4️⃣ Build and Run
+
+Connect an Android device or emulator.
+
+Click Run ▶️ in Android Studio.
+
+Log in or register to get started!
+
+📱 Usage
+
+Sign Up / Log In using Firebase Authentication.
+
+Add a Reminder via the Reminders tab to get notified before your study sessions.
+
+Create Notes to jot down important concepts or to-do lists.
+
+View your Dashboard to see upcoming reminders and recent notes.
+
+Receive notifications at scheduled times to stay on track.
+
+📸 Screenshots (Add later)
+Feature	Screenshot
+Login / Register	(insert image link)
+Dashboard	(insert image link)
+Notes	(insert image link)
+Reminders	(insert image link)
+🧩 Project Structure
+com.studybuddy.app/
+│
+├── auth/                 → Login & Register Screens
+├── notes/                → Notes UI + ViewModel + Entity
+├── reminders/            → Reminders UI + ViewModel + Entity
+├── data/                 → AppDatabase & DAO interfaces
+├── dashboard/            → Home screen (overview)
+├── viewmodel/            → Shared ViewModels (if applicable)
+├── navigation/           → AppNavHost for Compose navigation
+└── MainActivity.kt       → Entry point
+
+🔔 Notifications
+
+Reminders use the Android Notification API to alert users at scheduled times. Notifications are triggered using AlarmManager or WorkManager (depending on implementation), ensuring reliability even when the app is closed.
+
+🧩 Future Enhancements
+
+✅ Add cloud synchronization for notes and reminders.
+✅ Implement study session tracking with statistics and progress charts.
+✅ Add Pomodoro timer for focused study sessions.
+✅ Introduce Google Calendar integration.
+
+
+
+👤 Saadiq Jattiem
+📧 [Insert your contact email or LinkedIn]
+🔗 GitHub: Saadiq1234
