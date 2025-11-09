@@ -7,9 +7,12 @@ buildscript {
 }
 
 plugins {
+    // These aliases should match your libs.versions.toml file
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.compose.compiler) apply false
+
+    // Direct plugin versions (for safety)
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }

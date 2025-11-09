@@ -7,16 +7,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import com.studybuddy.app.R
 import com.studybuddy.app.auth.AuthViewModel
 import com.studybuddy.app.notes.NotesViewModel
-import com.studybuddy.app.notifications.NotificationHelper
 import com.studybuddy.app.reminders.RemindersViewModel
 import com.studybuddy.app.ui.theme.StudyBuddyTheme
+import com.studybuddy.app.util.LanguageViewModel
 import com.studybuddy.app.util.LocaleHelper
-import com.studybuddy.app.util.LanguageViewModel  // ✅ Added import
+import com.studybuddy.app.notifications.NotificationHelper
 
 class MainActivity : ComponentActivity() {
 
@@ -30,10 +31,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ✅ Initialize Firebase
+        // Initialize Firebase
         FirebaseApp.initializeApp(this)
 
-        // ✅ Request notification permission (Android 13+)
+        // Request notifications permission (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED
@@ -42,31 +43,26 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // ✅ Create notification channel
+        // Create notification channel
         NotificationHelper.createChannel(this)
 
-        // ✅ Show test notification
-        NotificationHelper.showNotification(
-            this,
-            title = getString(R.string.app_name),
-            body = getString(R.string.login_title)  // Make sure you add this in strings.xml
-        )
-
-        // ✅ Compose UI
         setContent {
             StudyBuddyTheme {
                 val navController = rememberNavController()
-                val authVm = remember { AuthViewModel() }
-                val notesVm = remember { NotesViewModel(applicationContext) }
-                val remindersVm = remember { RemindersViewModel(applicationContext) }
-                val languageVm = remember { LanguageViewModel() }  // ✅ Added
 
+                // Initialize ViewModels
+                val authViewModel = remember { AuthViewModel() }
+                val notesViewModel = remember { NotesViewModel(applicationContext) }
+                val remindersViewModel = remember { RemindersViewModel(applicationContext) }
+                val languageViewModel = remember { LanguageViewModel() }
+
+                // Pass all ViewModels to AppNavHost
                 AppNavHost(
                     navController = navController,
-                    authViewModel = authVm,
-                    notesViewModel = notesVm,
-                    remindersViewModel = remindersVm,
-                    languageViewModel = languageVm // ✅ Pass into AppNavHost
+                    authViewModel = authViewModel,
+                    notesViewModel = notesViewModel,
+                    remindersViewModel = remindersViewModel,
+                    languageViewModel = languageViewModel
                 )
             }
         }

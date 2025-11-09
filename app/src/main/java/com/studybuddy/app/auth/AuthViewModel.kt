@@ -2,34 +2,41 @@ package com.studybuddy.app.auth
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+
+// Make sure you define a UserEntity and UserRepository in your project
+data class UserEntity(val uid: String, val firstName: String, val surname: String, val email: String)
 
 class AuthViewModel : ViewModel() {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     val userState = MutableStateFlow(firebaseAuth.currentUser)
 
-    /** Email/password registration */
-    fun register(email: String, password: String, onResult: (Boolean, String?) -> Unit) {
-        if (email.isBlank() || password.isBlank()) {
-            onResult(false, "Email and password cannot be empty")
-            return
-        }
+    // Access the current user safely
+    val currentUser: FirebaseUser?
+        get() = firebaseAuth.currentUser
 
+    /** Email/password registration */
+    fun register(
+        email: String,
+        password: String,
+        firstName: String,
+        surname: String,
+        onResult: (Boolean, String?) -> Unit
+    ) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    userState.value = firebaseAuth.currentUser
-                    Log.d("AuthViewModel", "✅ User registered successfully: ${firebaseAuth.currentUser?.uid}")
+                    val uid = task.result.user?.uid ?: ""
+                    // Save additional user info in your database
+                    val user = UserEntity(uid, firstName, surname, email)
+                    // TODO: Insert user into your database, e.g., UserRepository.insert(user)
                     onResult(true, null)
                 } else {
-                    val error = task.exception?.localizedMessage ?: "Registration failed"
-                    Log.e("AuthViewModel", "❌ Registration error: $error")
-                    onResult(false, error)
+                    onResult(false, task.exception?.message)
                 }
             }
     }

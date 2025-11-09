@@ -11,6 +11,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Optional fallback (use only if you're in a region with mirror issues)
+        // maven { url = uri("https://jitpack.io") }
     }
 }
 

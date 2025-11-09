@@ -3,61 +3,46 @@ package com.studybuddy.app.notes
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.studybuddy.app.data.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
+import com.studybuddy.app.data.AppDatabase
 
 class NotesViewModel(private val context: Context) : ViewModel() {
-    private val auth = FirebaseAuth.getInstance()
-    private val repository = NoteRepository(context)
+
+    private val noteDao = AppDatabase.getInstance(context).noteDao()
+    private val repository = NoteRepository(noteDao)
+
     private val _notes = MutableStateFlow<List<NoteEntity>>(emptyList())
     val notes: StateFlow<List<NoteEntity>> = _notes
 
-    init {
-        val uid = auth.currentUser?.uid ?: ""
-        if (uid.isNotEmpty()) {
-            viewModelScope.launch {
-                repository.getNotesFlow(uid).collectLatest { list ->
-                    _notes.value = list
-                }
+    private var userId: String? = null
+
+    fun setUserId(uid: String) {
+        userId = uid
+        loadNotesForUser(uid)
+    }
+
+    fun loadNotesForUser(uid: String) {
+        viewModelScope.launch {
+            repository.getNotesForUserFlow(uid).collectLatest {
+                _notes.value = it
             }
         }
     }
 
-    fun createNote(title: String, content: String) {
-        val uid = auth.currentUser?.uid ?: "anon"
-        val note = NoteEntity(
-            id = UUID.randomUUID().toString(),
-            userId = uid,
-            title = title,
-            content = content,
-            timestamp = System.currentTimeMillis(),
-            synced = false
-        )
+    fun addNote(note: NoteEntity) {
         viewModelScope.launch {
-            repository.insertLocal(note)
+            repository.insert(note)
+            userId?.let { loadNotesForUser(it) } // refresh after adding
         }
-    }
-
-    fun updateNote(note: NoteEntity) {
-        val updatedNote = note.copy(
-            timestamp = System.currentTimeMillis(),
-            synced = false
-        )
-        viewModelScope.launch { repository.insertLocal(updatedNote) }
     }
 
     fun deleteNote(note: NoteEntity) {
         viewModelScope.launch {
-            AppDatabase.getInstance(context).noteDao().delete(note)
+            repository.delete(note)
+            userId?.let { loadNotesForUser(it) } // refresh after deleting
         }
-    }
-
-    fun manualSync() {
-        viewModelScope.launch { repository.syncUnsynced() }
     }
 }

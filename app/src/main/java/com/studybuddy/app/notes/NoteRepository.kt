@@ -1,26 +1,24 @@
 package com.studybuddy.app.notes
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class NoteRepository(
-    private val noteDao: NoteDao,
-    private val userId: String
-) {
+class NoteRepository(private val noteDao: NoteDao) {
 
-    // Returns a Flow of notes for this user, ordered by timestamp
-    fun getNotesFlow(): Flow<List<NoteEntity>> = noteDao.getNotesFlow(userId)
+    // Flow of notes filtered by userId
+    fun getNotesForUserFlow(userId: String): Flow<List<NoteEntity>> =
+        noteDao.getAllNotes().map { notes -> notes.filter { it.userId == userId } }
 
-    suspend fun insert(note: NoteEntity) {
-        noteDao.insert(note) // REPLACE strategy ensures updates are reflected
-    }
+    // Insert note
+    suspend fun insert(note: NoteEntity) = noteDao.insert(note)
 
-    suspend fun delete(note: NoteEntity) {
-        noteDao.delete(note)
-    }
+    // Update note
+    suspend fun update(note: NoteEntity) = noteDao.update(note)
 
-    suspend fun update(note: NoteEntity) {
-        noteDao.update(note)
-    }
+    // Delete note
+    suspend fun delete(note: NoteEntity) = noteDao.delete(note)
 
-    suspend fun getUnsyncedNotes(): List<NoteEntity> = noteDao.getUnsyncedNotes()
+    // Get unsynced notes
+    suspend fun getUnsyncedNotes(userId: String): List<NoteEntity> =
+        noteDao.getUnsyncedNotes(userId)
 }

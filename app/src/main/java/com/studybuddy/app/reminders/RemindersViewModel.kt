@@ -3,8 +3,7 @@ package com.studybuddy.app.reminders
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.studybuddy.app.data.AppDatabase  // <-- import your merged AppDatabase
+import com.studybuddy.app.data.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -12,40 +11,38 @@ import kotlinx.coroutines.launch
 
 class RemindersViewModel(private val context: Context) : ViewModel() {
 
-    private val auth = FirebaseAuth.getInstance()
     private val reminderDao = AppDatabase.getInstance(context).reminderDao()
+    private val repository = ReminderRepository(reminderDao)
 
     private val _reminders = MutableStateFlow<List<ReminderEntity>>(emptyList())
     val reminders: StateFlow<List<ReminderEntity>> = _reminders
 
-    init {
-        val uid = auth.currentUser?.uid ?: ""
-        if (uid.isNotEmpty()) {
-            viewModelScope.launch {
-                reminderDao.getRemindersForUser(uid).collectLatest { list ->
-                    _reminders.value = list
-                }
+    private var userId: String? = null
+
+    fun setUserId(uid: String) {
+        userId = uid
+        loadRemindersForUser(uid)
+    }
+
+    fun loadRemindersForUser(uid: String) {
+        viewModelScope.launch {
+            repository.getRemindersForUserFlow(uid).collectLatest {
+                _reminders.value = it
             }
         }
     }
 
-    fun addReminder(title: String, epoch: Long) {
-        val uid = auth.currentUser?.uid ?: "anon"
-        val reminder = ReminderEntity(
-            id = System.currentTimeMillis().toString(), // generate unique ID
-            userId = uid,
-            title = title,
-            timeEpoch = epoch
-        )
+    fun addReminder(reminder: ReminderEntity) {
         viewModelScope.launch {
-            reminderDao.insert(reminder)
-            ReminderScheduler.scheduleReminder(context, reminder)
+            repository.insert(reminder)
+            userId?.let { loadRemindersForUser(it) } // refresh after adding
         }
     }
 
-    fun delete(reminder: ReminderEntity) {
+    fun deleteReminder(reminder: ReminderEntity) {
         viewModelScope.launch {
-            reminderDao.delete(reminder)
+            repository.delete(reminder)
+            userId?.let { loadRemindersForUser(it) } // refresh after deleting
         }
     }
 }

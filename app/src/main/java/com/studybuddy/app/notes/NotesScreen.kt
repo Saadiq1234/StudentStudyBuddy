@@ -11,12 +11,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun NotesScreen(navController: NavController, viewModel: NotesViewModel) {
-    val notes by viewModel.notes.collectAsState()
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = { navController.navigate("note/new")
-        }) { Text("+") } }) { padding ->
-        Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
+fun NotesScreen(navController: NavController, notesViewModel: NotesViewModel) {
+    val notes by notesViewModel.notes.collectAsState(initial = emptyList())
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { navController.navigate("note/new") }) { Text("+") }
+        }
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize()) {
             Text("Your Notes", style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(8.dp))
             if (notes.isEmpty()) {
@@ -24,9 +27,12 @@ fun NotesScreen(navController: NavController, viewModel: NotesViewModel) {
             } else {
                 LazyColumn {
                     items(notes) { note ->
-                        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).clickable {
-                            navController.navigate("note/${note.id}")
-                        }) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                                .clickable { navController.navigate("note/${note.id}") }
+                        ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(note.title, style = MaterialTheme.typography.titleMedium)
                                 Spacer(Modifier.height(6.dp))

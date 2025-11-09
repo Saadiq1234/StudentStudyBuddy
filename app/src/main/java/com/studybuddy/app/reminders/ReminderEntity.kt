@@ -5,10 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "reminders")
 data class ReminderEntity(
-    @PrimaryKey val id: String = java.util.UUID.randomUUID().toString(),
+    @PrimaryKey val id: String,
     val userId: String,
     val title: String,
     val timeEpoch: Long,
-    val repeat: Boolean = false,
-    val synced: Boolean = false
+    val timestamp: Long = System.currentTimeMillis()
 )

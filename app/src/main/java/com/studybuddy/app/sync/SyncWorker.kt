@@ -3,7 +3,8 @@ package com.studybuddy.app.sync
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.studybuddy.app.data.AppDatabase  // <-- Fix: correct import
+import com.studybuddy.app.data.AppDatabase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -14,8 +15,11 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         val noteDao = db.noteDao()
         val firestore = FirebaseFirestore.getInstance()
 
-        // Make sure getUnsyncedNotes() returns List<NoteEntity>
-        val unsynced = noteDao.getUnsyncedNotes()
+        // ✅ Get current user's ID
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return Result.failure()
+
+        // ✅ Fetch only unsynced notes for this user
+        val unsynced = noteDao.getUnsyncedNotes(uid)
 
         for (note in unsynced) {
             try {
@@ -26,11 +30,14 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                     "timestamp" to note.timestamp
                 )
                 firestore.collection("notes").document(note.id).set(data).await()
+
+                // ✅ Mark as synced
                 noteDao.update(note.copy(synced = true))
             } catch (e: Exception) {
-                e.printStackTrace() // log error and continue
+                e.printStackTrace()
             }
         }
+
         return Result.success()
     }
 }

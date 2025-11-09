@@ -4,31 +4,49 @@ import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.studybuddy.app.notes.NotesViewModel
+import com.studybuddy.app.reminders.RemindersViewModel
+import com.studybuddy.app.util.LanguageViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
+fun LoginScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel,
+    languageViewModel: LanguageViewModel
+) {
     val scope = rememberCoroutineScope()
-    val snackbarHost = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
-    // ✅ Google Sign-In setup
+    // Notes & Reminders ViewModels
+    val notesViewModel = remember { NotesViewModel(context) }
+    val remindersViewModel = remember { RemindersViewModel(context) }
+
+    // Google Sign-In setup
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken("455747964921-4q1rmtifc3ji604japmp6av1qr1k9ehj.apps.googleusercontent.com") // Web Client ID
+        .requestIdToken("455747964921-4q1rmtifc3ji604japmp6av1qr1k9ehj.apps.googleusercontent.com")
         .requestEmail()
         .build()
     val googleSignInClient: GoogleSignInClient = GoogleSignIn.getClient(context, gso)
@@ -41,26 +59,28 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             val account = task.getResult(ApiException::class.java)
             val idToken = account?.idToken
             if (idToken != null) {
+                loading = true
                 authViewModel.signInWithGoogle(idToken) { ok, err ->
+                    loading = false
                     if (ok) {
-                        scope.launch { snackbarHost.showSnackbar("Signed in successfully!") }
-                        navController.navigate("dashboard")
+                        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                        notesViewModel.loadNotesForUser(uid)
+                        remindersViewModel.loadRemindersForUser(uid)
+                        scope.launch { snackbarHostState.showSnackbar("Google sign-in successful!") }
+                        navController.navigate("dashboard") { popUpTo("login") { inclusive = true } }
                     } else {
-                        scope.launch { snackbarHost.showSnackbar(err ?: "Google sign-in failed") }
+                        scope.launch { snackbarHostState.showSnackbar(err ?: "Google sign-in failed") }
                     }
                 }
             }
         } catch (e: ApiException) {
-            scope.launch { snackbarHost.showSnackbar("Google sign-in error: ${e.statusCode}") }
+            scope.launch { snackbarHostState.showSnackbar("Google sign-in error: ${e.statusCode}") }
         }
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHost) }) { padding ->
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
         Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
+            modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -71,7 +91,8 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
             Spacer(Modifier.height(12.dp))
 
@@ -80,26 +101,25 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
             Spacer(Modifier.height(20.dp))
 
-            // ✅ LOGIN BUTTON with validation
             Button(
                 onClick = {
-                    // Empty fields check
+                    if (loading) return@Button
                     if (email.isBlank() || password.isBlank()) {
-                        scope.launch { snackbarHost.showSnackbar("Please fill in all fields") }
+                        scope.launch { snackbarHostState.showSnackbar("Please fill in all fields") }
                         return@Button
                     }
-                    // Email format check
                     if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                        scope.launch { snackbarHost.showSnackbar("Please enter a valid email") }
+                        scope.launch { snackbarHostState.showSnackbar("Enter a valid email") }
                         return@Button
                     }
-                    // Password length check
                     if (password.length < 6) {
-                        scope.launch { snackbarHost.showSnackbar("Password must be at least 6 characters") }
+                        scope.launch { snackbarHostState.showSnackbar("Password must be at least 6 characters") }
                         return@Button
                     }
 
@@ -107,10 +127,13 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
                     authViewModel.login(email, password) { ok, err ->
                         loading = false
                         if (ok) {
-                            scope.launch { snackbarHost.showSnackbar("Login successful!") }
-                            navController.navigate("dashboard")
+                            val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                            notesViewModel.loadNotesForUser(uid)
+                            remindersViewModel.loadRemindersForUser(uid)
+                            scope.launch { snackbarHostState.showSnackbar("Login successful!") }
+                            navController.navigate("dashboard") { popUpTo("login") { inclusive = true } }
                         } else {
-                            scope.launch { snackbarHost.showSnackbar(err ?: "Login failed") }
+                            scope.launch { snackbarHostState.showSnackbar(err ?: "Login failed") }
                         }
                     }
                 },
@@ -121,24 +144,13 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             }
 
             Spacer(Modifier.height(16.dp))
-
-            // ✅ GOOGLE SIGN-IN BUTTON
             OutlinedButton(
-                onClick = {
-                    val signInIntent: Intent = googleSignInClient.signInIntent
-                    launcher.launch(signInIntent)
-                },
+                onClick = { launcher.launch(googleSignInClient.signInIntent) },
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Sign in with Google")
-            }
+            ) { Text("Sign in with Google") }
 
             Spacer(Modifier.height(16.dp))
-
-            // ✅ NAVIGATE TO REGISTER
-            TextButton(onClick = { navController.navigate("register") }) {
-                Text("Create an account")
-            }
+            TextButton(onClick = { navController.navigate("register") }) { Text("Create an account") }
         }
     }
 }
