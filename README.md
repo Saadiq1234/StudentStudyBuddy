@@ -1,7 +1,7 @@
 🎓 Student Study Buddy
 
 
-Contributors to this application is Saadiq Jattiem ST10303758 and Hopewell Mhlaba ST10218234
+Contributors to this application is Saadiq Jattiem ST10303758 and Hopewell Mhlaba ST10218234, Ditshwanelo Tumane ST10311615
 Student Study Buddy is a modern Android application designed to help students stay organized, focused, and productive throughout their study journey. With built-in tools for reminders, note-taking, and a clean dashboard overview, this app simplifies how students manage their academic responsibilities.
 
 The app is built with Jetpack Compose, follows MVVM architecture, and integrates Firebase Authentication for secure sign-in and Room Database for offline data storage.
